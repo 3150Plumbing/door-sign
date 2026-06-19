@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Door Sign Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aptos:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--font:'Aptos','Segoe UI',Arial,sans-serif;--amber-light:#fdf3e3;--amber-mid:#e8a838}
+body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px;gap:24px}
+.page-heading{text-align:center}
+.page-heading h1{font-size:1.5rem;font-weight:700;color:#2a2a2a;letter-spacing:.02em}
+.page-heading p{font-size:.85rem;color:#666;margin-top:2px}
+.help-card{background:var(--amber-light);border:1.5px solid #e0c88a;border-radius:10px;padding:16px 20px;width:100%;max-width:480px}
+.help-card h2{font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7a5a1a;margin-bottom:10px}
+.help-steps{list-style:none;display:flex;flex-direction:column;gap:6px}
+.help-steps li{display:flex;gap:10px;font-size:.82rem;color:#3a3020;line-height:1.4}
+.step-num{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--amber-mid);color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.help-note{margin-top:10px;font-size:.76rem;color:#7a6030;border-top:1px solid #e0c88a;padding-top:8px;line-height:1.4}
+.sign-wrapper{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.sign-scale{transform-origin:top center;display:inline-block}
+.sign{width:384px;height:384px;border:3px solid #000;background:#fff;display:flex;flex-direction:column}
+.sign-title-wrap{padding:10px 12px 4px;flex-shrink:0}
+.sign-title{font-family:var(--font);font-weight:700;font-size:34px;line-height:1.15;color:#000;text-align:center;outline:none;min-height:42px;word-break:break-word;cursor:text}
+.sign-title:empty::before{content:attr(data-placeholder);color:#bbb;pointer-events:none}
+.sign-bullets{flex:1;padding:2px 12px 4px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.bullet-row{display:flex;align-items:flex-start}
+.bullet-char{font-size:26px;font-weight:700;line-height:1.2;color:#000;flex-shrink:0;padding-right:5px;user-select:none;margin-top:1px}
+.bullet-text{font-family:var(--font);font-weight:700;font-size:26px;line-height:1.2;color:#000;outline:none;flex:1;word-break:break-word;cursor:text;min-height:32px}
+.bullet-text:empty::before{content:attr(data-placeholder);color:#bbb;pointer-events:none}
+.bullet-remove{flex-shrink:0;width:22px;height:22px;border:none;background:#ddd;color:#555;border-radius:50%;font-size:12px;cursor:pointer;display:none;align-items:center;justify-content:center;margin-top:3px;margin-left:4px;transition:background .15s}
+.bullet-remove:hover{background:#f08080;color:#fff}
+.sign-logo{flex-shrink:0;height:18%;border-top:2px solid #000;display:flex;align-items:center;justify-content:center;padding:3px 8px;background:#fff}
+.sign-logo img{max-height:100%;max-width:100%;object-fit:contain;display:block}
+.controls{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.controls-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{font-family:var(--font);font-weight:700;font-size:.9rem;padding:12px 22px;min-height:44px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .1s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-add{background:#fff;border:2px solid var(--amber-mid);color:#7a4f00}
+.btn-add:hover{background:var(--amber-light)}
+.btn-png{background:#2a7a2a;color:#fff}
+.btn-png:hover{opacity:.88}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+[contenteditable]:focus{outline:2px solid rgba(232,168,56,.5);outline-offset:2px;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="page-heading">
+  <h1>Door Sign Builder</h1>
+  <p>b.stromberg construction company inc.</p>
+</div>
+
+<div class="help-card">
+  <h2>How to make your sign</h2>
+  <ol class="help-steps">
+    <li><span class="step-num">1</span><span>Click the <strong>title area</strong> to type your title (e.g. <em>RULES FOR DEMO:</em>)</span></li>
+    <li><span class="step-num">2</span><span>Click a <strong>bullet point</strong> to type an instruction. Use <strong>+ Add Bullet</strong> to add more (up to 3).</span></li>
+    <li><span class="step-num">3</span><span>Click <strong>Download PNG</strong> to save and print your sign.</span></li>
+  </ol>
+  <p class="help-note">&#128395; Sign prints at 4&#8243;&#215;4&#8243; &mdash; best printed on a standard printer and taped to the door.</p>
+</div>
+
+<div class="sign-wrapper">
+  <div class="sign-scale" id="sign-scale">
+    <div class="sign" id="sign">
+      <div class="sign-title-wrap">
+        <div class="sign-title" id="sign-title" contenteditable="true" spellcheck="false" data-placeholder="Click to enter title&hellip;"></div>
+      </div>
+      <div class="sign-bullets" id="bullets-container"></div>
+      <div class="sign-logo">
+        <img src="./Stromberg Logo.webp" alt="b.stromberg construction logo" id="logo-img">
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" id="controls">
+    <div class="controls-row">
+      <button class="btn btn-add" id="add-bullet-btn">+ Add Bullet</button>
+    </div>
+    <div class="controls-row">
+      <button class="btn btn-png" id="download-png-btn">Download PNG</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const MAX = 3;
+  const TITLE_SIZES = [34, 28, 22, 18, 15];
+  const BULLET_SIZES = [26, 21, 17, 14];
+  let bullets = [], uid = 0;
+
+  const container = document.getElementById('bullets-container');
+  const addBtn    = document.getElementById('add-bullet-btn');
+  const titleEl   = document.getElementById('sign-title');
+  const signEl    = document.getElementById('sign');
+  const scaleEl   = document.getElementById('sign-scale');
+
+  // Logo embedded as base64 — works under file:// with no fetch needed
+  const logoDataURL = 'data:image/webp;base64,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';
+
+  function preventEnter(e) { if (e.key === 'Enter') e.preventDefault(); }
+
+  function createBullet() {
+    if (bullets.length >= MAX) return;
+    const id = ++uid;
+    const row = document.createElement('div');
+    row.className = 'bullet-row';
+    const dot = document.createElement('span');
+    dot.className = 'bullet-char';
+    dot.textContent = '•';
+    const text = document.createElement('div');
+    text.className = 'bullet-text';
+    text.contentEditable = 'true';
+    text.spellcheck = false;
+    text.dataset.placeholder = 'Type instruction here…';
+    text.addEventListener('input', autoShrinkAll);
+    text.addEventListener('keydown', preventEnter);
+    const rm = document.createElement('button');
+    rm.className = 'bullet-remove';
+    rm.title = 'Remove';
+    rm.textContent = '✕';
+    rm.addEventListener('click', () => removeBullet(id));
+    row.append(dot, text, rm);
+    container.appendChild(row);
+    bullets.push({ id, row, textEl: text, rmBtn: rm });
+    updateUI();
+  }
+
+  function removeBullet(id) {
+    if (bullets.length <= 1) return;
+    const i = bullets.findIndex(b => b.id === id);
+    if (i === -1) return;
+    bullets[i].row.remove();
+    bullets.splice(i, 1);
+    updateUI();
+  }
+
+  function updateUI() {
+    addBtn.disabled = bullets.length >= MAX;
+    const multi = bullets.length > 1;
+    bullets.forEach(b => { b.rmBtn.style.display = multi ? 'flex' : 'none'; });
+  }
+
+  function autoShrinkTitle() {
+    for (const sz of TITLE_SIZES) {
+      titleEl.style.fontSize = sz + 'px';
+      if (titleEl.scrollHeight <= titleEl.parentElement.offsetHeight + 60) break;
+    }
+  }
+
+  function autoShrinkAll() {
+    const logoH  = signEl.querySelector('.sign-logo').offsetHeight;
+    const titleH = signEl.querySelector('.sign-title-wrap').offsetHeight;
+    const availH = signEl.offsetHeight - logoH - titleH;
+    for (const sz of BULLET_SIZES) {
+      bullets.forEach(b => {
+        b.textEl.style.fontSize = sz + 'px';
+        b.row.querySelector('.bullet-char').style.fontSize = sz + 'px';
+      });
+      if (container.scrollHeight <= availH + 8) break;
+    }
+  }
+
+  titleEl.addEventListener('input', autoShrinkTitle);
+  titleEl.addEventListener('keydown', preventEnter);
+  createBullet();
+  addBtn.addEventListener('click', createBullet);
+
+  // Responsive scaling
+  function scaleSign() {
+    const avail = scaleEl.parentElement.clientWidth - 4;
+    const s = Math.min(1, avail / 384);
+    scaleEl.style.transform = 'scale(' + s + ')';
+    scaleEl.style.height = (384 * s) + 'px';
+    scaleEl.style.width = '384px';
+  }
+  window.addEventListener('resize', scaleSign);
+  scaleSign();
+
+  // ── Canvas-based PNG export (bypasses file:// taint restrictions) ──
+  document.getElementById('download-png-btn').addEventListener('click', async function () {
+    this.disabled = true;
+    this.textContent = 'Rendering…';
+
+    try {
+      const SCALE = 4;
+      const SIZE  = 384 * SCALE;   // 1536px
+      const PAD   = 12 * SCALE;
+      const BORDER = 3 * SCALE;
+      const LOGO_H = Math.round(384 * 0.18) * SCALE;
+      const LOGO_LINE = 2 * SCALE;
+
+      const cv  = document.createElement('canvas');
+      cv.width  = SIZE;
+      cv.height = SIZE;
+      const ctx = cv.getContext('2d');
+
+      // White background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, SIZE, SIZE);
+
+      // Outer border
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = BORDER;
+      ctx.strokeRect(BORDER / 2, BORDER / 2, SIZE - BORDER, SIZE - BORDER);
+
+      // -- Title --
+      const titleText = titleEl.innerText.trim();
+      const titleFontSize = parseInt(getComputedStyle(titleEl).fontSize) * SCALE;
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold ' + titleFontSize + 'px Aptos, "Segoe UI", Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      // Word-wrap title
+      const titleMaxW = SIZE - PAD * 2;
+      const titleLines = wrapText(ctx, titleText, titleMaxW);
+      const titleLineH = titleFontSize * 1.15;
+      let y = PAD + BORDER;
+      titleLines.forEach(line => {
+        ctx.fillText(line, SIZE / 2, y);
+        y += titleLineH;
+      });
+      const titleBottom = y + 4 * SCALE;
+
+      // -- Bullets --
+      ctx.textAlign = 'left';
+      const bulletAreaTop  = titleBottom;
+      const bulletAreaBot  = SIZE - LOGO_H - LOGO_LINE;
+
+      if (bullets.length > 0) {
+        const bulletFontSize = parseInt(getComputedStyle(bullets[0].textEl).fontSize) * SCALE;
+        ctx.font = 'bold ' + bulletFontSize + 'px Aptos, "Segoe UI", Arial, sans-serif';
+        const lineH = bulletFontSize * 1.2;
+        const dotW  = ctx.measureText('• ').width;
+        const textMaxW = SIZE - PAD * 2 - dotW;
+
+        // Measure total height first to vertically distribute
+        const allLines = bullets.map(b => {
+          const txt = b.textEl.innerText.trim();
+          return wrapText(ctx, txt, textMaxW);
+        });
+        const totalH = allLines.reduce((s, ls) => s + ls.length * lineH, 0)
+                     + (bullets.length - 1) * (lineH * 0.3);
+        const availH = bulletAreaBot - bulletAreaTop;
+        let by = bulletAreaTop + Math.max(0, (availH - totalH) / 2);
+
+        allLines.forEach((lines, bi) => {
+          let firstLine = true;
+          lines.forEach(line => {
+            if (firstLine) {
+              ctx.fillText('•', PAD + BORDER, by);
+              ctx.fillText(line, PAD + BORDER + dotW, by);
+              firstLine = false;
+            } else {
+              ctx.fillText(line, PAD + BORDER + dotW, by);
+            }
+            by += lineH;
+          });
+          by += lineH * 0.3; // gap between bullets
+        });
+      }
+
+      // -- Logo divider line --
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = LOGO_LINE;
+      const lineY = SIZE - LOGO_H - LOGO_LINE / 2;
+      ctx.beginPath();
+      ctx.moveTo(0, lineY);
+      ctx.lineTo(SIZE, lineY);
+      ctx.stroke();
+
+      // -- Logo image --
+      await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const logoAreaTop = SIZE - LOGO_H;
+          const logoAreaH   = LOGO_H - LOGO_LINE;
+          const logoAreaW   = SIZE - PAD * 2;
+          // Fit logo within area maintaining aspect ratio
+          const ratio = Math.min(logoAreaW / img.naturalWidth, logoAreaH / img.naturalHeight);
+          const dw = img.naturalWidth  * ratio;
+          const dh = img.naturalHeight * ratio;
+          const dx = (SIZE - dw) / 2;
+          const dy = logoAreaTop + (logoAreaH - dh) / 2;
+          ctx.drawImage(img, dx, dy, dw, dh);
+          resolve();
+        };
+        img.onerror = () => resolve(); // skip logo gracefully
+        img.src = logoDataURL || './Stromberg Logo.webp';
+      });
+
+      // Download
+      cv.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.download = 'door-sign.png';
+        a.href = url;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }, 'image/png');
+
+    } catch (err) {
+      console.error(err);
+      alert('Export failed: ' + err.message);
+    }
+
+    this.disabled = false;
+    this.textContent = 'Download PNG';
+  });
+
+  // Word-wrap helper for canvas
+  function wrapText(ctx, text, maxWidth) {
+    if (!text) return [];
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+      const test = current ? current + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+})();
+</script>
+</body>
+</html>
