@@ -125,7 +125,15 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
     text.spellcheck = false;
     text.dataset.placeholder = 'Type instruction here…';
     text.addEventListener('input', autoShrinkAll);
-    text.addEventListener('keydown', preventEnter);
+    text.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (bullets.length < MAX) {
+          createBullet();
+          bullets[bullets.length - 1].textEl.focus();
+        }
+      }
+    });
     const rm = document.createElement('button');
     rm.className = 'bullet-remove';
     rm.title = 'Remove';
