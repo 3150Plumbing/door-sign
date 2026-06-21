@@ -43,6 +43,9 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
 .btn-add:hover{background:var(--amber-light)}
 .btn-png{background:#2a7a2a;color:#fff}
 .btn-png:hover{opacity:.88}
+.btn-print{background:#1a5a9a;color:#fff}
+.btn-print:hover{opacity:.88}
+@media print{.page-heading,.help-card,.controls{display:none!important}.sign-wrapper{display:flex!important;margin:0!important}.sign-scale{transform:none!important;width:4in!important;height:4in!important}.sign{width:4in!important;height:4in!important}}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 [contenteditable]:focus{outline:2px solid rgba(232,168,56,.5);outline-offset:2px;border-radius:3px}
 </style>
@@ -58,7 +61,7 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
   <h2>How to make your sign</h2>
   <ol class="help-steps">
     <li><span class="step-num">1</span><span>Click the <strong>title area</strong> to type your title (e.g. <em>RULES FOR DEMO:</em>)</span></li>
-    <li><span class="step-num">2</span><span>Click a <strong>bullet point</strong> to type an instruction. Use <strong>+ Add Bullet</strong> to add more (up to 3).</span></li>
+    <li><span class="step-num">2</span><span>Click a <strong>bullet point</strong> to type an instruction. Use <strong>+ Add Bullet</strong> to add more (up to 5).</span></li>
     <li><span class="step-num">3</span><span>Click <strong>Download PNG</strong> to save and print your sign.</span></li>
   </ol>
   <p class="help-note">&#128395; Sign prints at 4&#8243;&#215;4&#8243; &mdash; best printed on a standard printer and taped to the door.</p>
@@ -83,6 +86,7 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
     </div>
     <div class="controls-row">
       <button class="btn btn-png" id="download-png-btn">Download PNG</button>
+      <button class="btn btn-print" id="print-btn">Print</button>
     </div>
   </div>
 </div>
@@ -91,7 +95,7 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
 (function () {
   'use strict';
 
-  const MAX = 3;
+  const MAX = 5;
   const TITLE_SIZES = [34, 28, 22, 18, 15];
   const BULLET_SIZES = [26, 21, 17, 14];
   let bullets = [], uid = 0;
@@ -314,6 +318,10 @@ body{font-family:var(--font);background:#f0ece6;min-height:100vh;display:flex;fl
 
     this.disabled = false;
     this.textContent = 'Download PNG';
+  });
+
+  document.getElementById('print-btn').addEventListener('click', function () {
+    window.print();
   });
 
   // Word-wrap helper for canvas
